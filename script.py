@@ -1,5 +1,6 @@
 import scipy.optimize as opt
 import numpy as np
+import pandas as pd
 
 
 def calculate_segment_area_from_height(radius, height):
@@ -55,6 +56,7 @@ def calculate_arc_height(radius, area):
     return theta_solution, h
 
 def calculate_All(radius, increment):
+    data = []
     area = 0
     prev = 0
     difference = 0
@@ -64,22 +66,23 @@ def calculate_All(radius, increment):
         
         area += increment
         theta, height = calculate_arc_height(radius, area)
-        difference = height-prev
-        if difference<0:
+        difference = height - prev
+        if difference < 0:
             break
-        # print(count)
-        print(f"Area: {round(area)}m^2")
-        # print(f"Central angle (theta): {theta} radians")
-        print(f"Distance from Circumference: {round(height)}m")
-        
-        print(f"Distance from last point: {round(difference)}")
+        # Append data to list
+        data.append({
+            "Area (m^2)": round(area),
+            "Distance from Circumference (m)": round(height),
+            "Distance from last point (m)": round(difference)
+        })
         prev = height
         # count+=1
 
     remaining = (radius * 2 - prev)
     leftOver = calculate_segment_area_from_height(radius, remaining)
-
-    print(f"Left Over: {leftOver}")
+    data.append({"Area (m^2)": "Left Over", "Distance from Circumference (m)": leftOver, "Distance from last point (m)": leftOver})
+    
+    return data
 
 # Example usage:
 radius = 338.6
@@ -88,5 +91,16 @@ increment = 40000
 print("-----------------------------------\nWELCOME\n-----------------------------------")
 print(f"Radius :{radius}\nArea Increment:{increment}")
 
+# Create a DataFrame to store all results
+all_data = []
+
 for x in range(4):
-    calculate_All(radius,increment+ 5000 * x)
+    data = calculate_All(radius, increment + 5000 * x)
+    all_data.extend(data)
+    all_data.append({"Area (m^2)": "----------", "Distance from Circumference (m)": "----------", "Distance from last point (m)": "----------"})
+
+# Convert the list of data to a DataFrame
+df = pd.DataFrame(all_data)
+
+# Save the DataFrame to an Excel file
+df.to_excel("output.xlsx", index=False)
