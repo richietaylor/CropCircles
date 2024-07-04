@@ -54,6 +54,33 @@ def calculate_arc_height(radius, area):
 
     return theta_solution, h
 
+def calculate_All(radius, increment):
+    area = 0
+    prev = 0
+    difference = 0
+    total = 0
+    # count = 1
+    while True:
+        
+        area += increment
+        theta, height = calculate_arc_height(radius, area)
+        difference = height-prev
+        if difference<0:
+            break
+        # print(count)
+        print(f"Area: {round(area)}m^2")
+        # print(f"Central angle (theta): {theta} radians")
+        print(f"Distance from Circumference: {round(height)}m")
+        
+        print(f"Distance from last point: {round(difference)}")
+        prev = height
+        # count+=1
+
+    remaining = (radius * 2 - prev)
+    leftOver = calculate_segment_area_from_height(radius, remaining)
+
+    print(f"Left Over: {leftOver}")
+
 # Example usage:
 radius = 338.6
 increment = 40000
@@ -61,28 +88,5 @@ increment = 40000
 print("-----------------------------------\nWELCOME\n-----------------------------------")
 print(f"Radius :{radius}\nArea Increment:{increment}")
 
-area = 0
-prev = 0
-difference = 0
-total = 0
-# count = 1
-while True:
-    
-    area += increment
-    theta, height = calculate_arc_height(radius, area)
-    difference = height-prev
-    if difference<0:
-        break
-    # print(count)
-    print(f"Area: {round(area)}m^2")
-    # print(f"Central angle (theta): {theta} radians")
-    print(f"Distance from Circumference: {round(height)}m")
-    
-    print(f"Distance from last point: {round(difference)}")
-    prev = height
-    # count+=1
-
-remaining = (radius * 2 - prev)
-leftOver = calculate_segment_area_from_height(radius, remaining)
-
-print(f"Left Over: {leftOver}")
+for x in range(4):
+    calculate_All(radius,increment+ 5000 * x)
