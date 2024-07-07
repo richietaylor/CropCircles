@@ -61,46 +61,65 @@ def calculate_All(radius, increment):
     prev = 0
     difference = 0
     total = 0
-    # count = 1
+    count = 1
     while True:
         
         area += increment
         theta, height = calculate_arc_height(radius, area)
         difference = height - prev
-        if difference < 0:
+        if (difference < 0 or difference < 15):
             break
         # Append data to list
         data.append({
+            "Cut": count,
             "Area (m^2)": round(area),
             "Distance from Circumference (m)": round(height),
             "Distance from last point (m)": round(difference)
         })
         prev = height
-        # count+=1
+        count += 1
 
     remaining = (radius * 2 - prev)
     leftOver = calculate_segment_area_from_height(radius, remaining)
-    data.append({"Area (m^2)": "Left Over", "Distance from Circumference (m)": leftOver, "Distance from last point (m)": leftOver})
+    data.append({
+        "Cut": "Final",
+        "Area (m^2)": "Left Over (m^2)",
+        "Distance from Circumference (m)": round(leftOver),
+        "Distance from last point (m)": round(leftOver)
+    })
     
     return data
 
-# Example usage:
-radius = 338.6
-increment = 40000
 
-print("-----------------------------------\nWELCOME\n-----------------------------------")
-print(f"Radius :{radius}\nArea Increment:{increment}")
+
+
+print("-----------------------------------\nWELCOME BUZZ\n-----------------------------------")
+
+# 338.6
+radius = float(input("Radius: "))
+# 40000
+increment = float(input("Area: "))
+# print(f"Radius :{radius}\nArea Increment:{increment}")
+
+
 
 # Create a DataFrame to store all results
 all_data = []
 
-for x in range(4):
+for x in range(5):
     data = calculate_All(radius, increment + 5000 * x)
     all_data.extend(data)
-    all_data.append({"Area (m^2)": "----------", "Distance from Circumference (m)": "----------", "Distance from last point (m)": "----------"})
+    all_data.append({
+        "Cut": "------",
+        "Area (m^2)": "----------",
+        "Distance from Circumference (m)": "----------",
+        "Distance from last point (m)": "----------"
+    })
 
 # Convert the list of data to a DataFrame
 df = pd.DataFrame(all_data)
 
 # Save the DataFrame to an Excel file
-df.to_excel("output.xlsx", index=False)
+df.to_excel(f"output_{radius}_{increment}.xlsx", index=False)
+
+print("Success!")
